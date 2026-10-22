@@ -1,0 +1,53 @@
+#!/bin/bash
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# GENERATE SECRETS
+#=================================================
+ynh_script_progression "Generating cryptographic secret..."
+
+app_secret=$(ynh_string_random --length=48)
+ynh_app_setting_set --key=app_secret --value="$app_secret"
+
+_setup_app_sources
+
+#=================================================
+# BUILD GO BACKEND WITH EMBEDDED WEB FRONTEND
+#=================================================
+ynh_script_progression "Building Conferencias Mumble Go binary..."
+
+_build_app
+
+#=================================================
+# ADD CONFIGURATION
+#=================================================
+ynh_script_progression "Adding $app's configuration files..."
+
+ynh_config_add --template="app.env" --destination="$install_dir/.env"
+chmod 600 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Adding system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start" --wait_until="escuchando en" --log_path=systemd --timeout=120
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_script_progression "Installation of $app completed"

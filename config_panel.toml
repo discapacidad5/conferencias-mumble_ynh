@@ -1,0 +1,25 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/config_panel.v1.schema.json
+
+version = "1.0"
+
+[main]
+name.en = "Mumble Server Configuration"
+name.es = "Configuración del servidor Mumble"
+services = ["__APP__"]
+
+    [main.mumble]
+    name.en = "Mumble Voice Backend"
+    name.es = "Servidor de voz Mumble"
+
+        [main.mumble.mumble_mode]
+        ask.en = "Mumble connection mode"
+        ask.es = "Modo de conexión Mumble"
+        type = "select"
+        choices.local = "Servidor Mumble Local (127.0.0.1:64738)"
+        choices.remoto = "Servidor Mumble Público / Remoto"
+        default = "local"
+
+        [main.mumble.mumble_remote_host]
+        ask.en = "Remote Mumble host"
+        ask.es = "Host o dominio del servidor Mumble remoto"
+        type = "string"

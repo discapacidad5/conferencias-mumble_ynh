@@ -1,0 +1,88 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "conferencias-mumble"
+name = "Conferencias Mumble"
+description.en = "Ultra-lightweight voice & moderated 9-seat conferencing over Mumble and HTTPS/443 for slow mobile connections"
+description.es = "Plataforma ultraligera de conferencias con 9 asientos moderados, protocolo Mumble, pizarra y cámara ligera por HTTPS/443"
+
+version = "1.0.0~ynh1"
+
+maintainers = ["discapacidad5"]
+
+[upstream]
+license = "MIT"
+code = "https://github.com/discapacidad5/conferencias-mumble"
+admindoc = "https://github.com/discapacidad5/conferencias-mumble/blob/main/README.md"
+userdoc = "https://github.com/discapacidad5/conferencias-mumble/blob/main/README.md"
+
+[integration]
+yunohost = ">= 11.2.8"
+helpers_version = "2.1"
+architectures = ["amd64", "arm64"]
+multi_instance = true
+ldap = false
+sso = false
+disk = "200M"
+ram.build = "512M"
+ram.runtime = "64M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+    [install.password]
+    ask.en = "Administrator password for the conferencing panel"
+    ask.es = "Contraseña del panel de administración de salas"
+    help.en = "Used to log in to the room management and Mumble server configuration panel (minimum 4 characters)."
+    help.es = "Se usa para entrar al panel de creación de salas y configuración del servidor Mumble (mínimo 4 caracteres)."
+    type = "password"
+
+    [install.mumble_mode]
+    ask.en = "Initial Mumble server mode"
+    ask.es = "Modo inicial del servidor de voz Mumble"
+    help.en = "You can switch between the local Mumble server and any public remote Mumble server at any time from the web admin panel."
+    help.es = "Puedes cambiar entre el servidor Mumble local y cualquier Mumble público remoto en cualquier momento desde el panel web."
+    type = "select"
+    default = "local"
+    choices.local = "Servidor Mumble Local (instalado en este servidor)"
+    choices.remoto = "Servidor Mumble Público / Remoto en Internet"
+
+    [install.mumble_remote_host]
+    ask.en = "Remote public Mumble server host (only if remote mode is selected)"
+    ask.es = "Host del servidor Mumble público remoto (opcional, editable luego en el panel)"
+    type = "string"
+    default = "localhost"
+
+[resources]
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+    subdirs = ["docs"]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+    main.default = 3000
+
+    [resources.apt]
+    packages = [
+        "mumble-server",
+        "git",
+        "curl",
+        "ca-certificates"
+    ]
+
+    [resources.go]
+    version = "1.24"

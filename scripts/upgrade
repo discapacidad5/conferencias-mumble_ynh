@@ -1,0 +1,71 @@
+#!/bin/bash
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Stopping $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="stop"
+
+#=================================================
+# ENSURE SETTINGS EXIST
+#=================================================
+ynh_script_progression "Validating settings..."
+
+if [ -z "${app_secret:-}" ]; then
+    app_secret=$(ynh_string_random --length=48)
+    ynh_app_setting_set --key=app_secret --value="$app_secret"
+fi
+
+if [ -z "${mumble_mode:-}" ]; then
+    mumble_mode="local"
+    ynh_app_setting_set --key=mumble_mode --value="$mumble_mode"
+fi
+
+if [ -z "${mumble_remote_host:-}" ]; then
+    mumble_remote_host="localhost"
+    ynh_app_setting_set --key=mumble_remote_host --value="$mumble_remote_host"
+fi
+
+#=================================================
+# UPDATE SOURCES AND REBUILD
+#=================================================
+ynh_script_progression "Updating sources and rebuilding $app..."
+
+_setup_app_sources
+_build_app
+
+#=================================================
+# UPDATE CONFIGURATION
+#=================================================
+ynh_script_progression "Updating $app's configuration files..."
+
+ynh_config_add --template="app.env" --destination="$install_dir/.env"
+chmod 600 "$install_dir/.env"
+chown "$app:$app" "$install_dir/.env"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression "Upgrading system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start" --wait_until="escuchando en" --log_path=systemd --timeout=120
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_script_progression "Upgrade of $app completed"
