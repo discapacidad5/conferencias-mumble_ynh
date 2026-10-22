@@ -6,12 +6,17 @@
 
 UPSTREAM_REPO="https://github.com/discapacidad5/conferencias-mumble.git"
 
+# En YunoHost, la variable $password (type="password") solo existe durante
+# install y no se guarda en settings.yml; en upgrade/config/change_url usamos
+# un valor de respaldo (el hash real ya quedó persistido en $data_dir/datos.json).
+admin_pwd="${password:-admin123}"
+
 _setup_app_sources() {
     mkdir -p "$install_dir" "$data_dir/docs"
 
     local tmp_clone
     tmp_clone=$(mktemp -d)
-    git clone --depth 1 "$UPSTREAM_REPO" "$tmp_clone"
+    git clone --quiet --depth 1 "$UPSTREAM_REPO" "$tmp_clone"
 
     for item in main.go mumble.go state.go store.go go.mod go.sum web LICENSE README.md; do
         if [ -e "$tmp_clone/$item" ]; then
