@@ -56,6 +56,8 @@ ynh_config_add_nginx
 
 ynh_config_add_systemd
 
+_stabilize_cloudflared_tunnel
+
 yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
 
 #=================================================

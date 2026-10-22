@@ -47,3 +47,16 @@ _build_app() {
     chmod 750 "$install_dir" "$data_dir"
     chmod +x "$install_dir/conferencia-mumble"
 }
+
+_stabilize_cloudflared_tunnel() {
+    if systemctl list-unit-files 2>/dev/null | grep -q '^cloudflared\.service'; then
+        mkdir -p /etc/systemd/system/cloudflared.service.d
+        cat > /etc/systemd/system/cloudflared.service.d/http2.conf <<'EOF'
+[Service]
+Environment="TUNNEL_TRANSPORT_PROTOCOL=http2"
+Environment="TUNNEL_EDGE_IP_VERSION=4"
+EOF
+        systemctl daemon-reload 2>/dev/null || true
+        systemctl restart cloudflared 2>/dev/null || true
+    fi
+}
