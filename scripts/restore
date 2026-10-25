@@ -37,6 +37,8 @@ systemctl enable "$app.service" --quiet
 
 yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
 
+_install_app_logo
+
 #=================================================
 # RELOAD NGINX AND START THE APP SERVICE
 #=================================================

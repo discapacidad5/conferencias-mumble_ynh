@@ -16,6 +16,8 @@ ynh_config_remove_systemd
 
 ynh_config_remove_nginx
 
+_remove_app_logo
+
 #=================================================
 # END OF SCRIPT
 #=================================================

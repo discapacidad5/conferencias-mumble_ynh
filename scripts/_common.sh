@@ -60,3 +60,27 @@ EOF
         systemctl restart cloudflared 2>/dev/null || true
     fi
 }
+
+# Las apps instaladas fuera del catalogo no tienen icono en el portal de YunoHost.
+# Truco oficial de src/app.py de YunoHost: si existe
+# /usr/share/yunohost/applogos/$app.png, ese archivo se usa como logo de la app.
+_install_app_logo() {
+    local logos_dir="/usr/share/yunohost/applogos"
+    local src_logo=""
+    if [ -f "$install_dir/web/icon-512.png" ]; then
+        src_logo="$install_dir/web/icon-512.png"
+    elif [ -f "../doc/logo.png" ]; then
+        src_logo="../doc/logo.png"
+    elif [ -f "../settings/doc/logo.png" ]; then
+        src_logo="../settings/doc/logo.png"
+    fi
+    if [ -n "$src_logo" ]; then
+        mkdir -p "$logos_dir" 2>/dev/null || true
+        cp -f "$src_logo" "$logos_dir/$app.png" 2>/dev/null || true
+        chmod 644 "$logos_dir/$app.png" 2>/dev/null || true
+    fi
+}
+
+_remove_app_logo() {
+    rm -f "/usr/share/yunohost/applogos/$app.png"
+}
