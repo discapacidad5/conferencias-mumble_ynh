@@ -87,7 +87,7 @@ _install_app_logo() {
         cp -f "$src_logo" "$logos_dir/$logo_hash.png"
         chmod 644 "$logos_dir/$logo_hash.png" 2>/dev/null || true
 
-        python3 - "$app" "$logo_hash" <<'PYEOF'
+        python3 - "$app" "$logo_hash" <<'PYEOF' || true
 import sys, yaml
 app, logo_hash = sys.argv[1], sys.argv[2]
 path = f"/etc/yunohost/apps/{app}/settings.yml"
