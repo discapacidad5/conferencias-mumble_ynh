@@ -63,7 +63,10 @@ EOF
 
 # Las apps instaladas fuera del catalogo no tienen icono en el portal de YunoHost.
 # Truco oficial de src/app.py de YunoHost: si existe
-# /usr/share/yunohost/applogos/$app.png, ese archivo se usa como logo de la app.
+# /usr/share/yunohost/applogos/$app.png, ese archivo se usa como logo de la app
+# en el webadmin (app_info). Para el portal SSO (tiles), app_ssowatconf() lee
+# _permissions.main.logo_hash de /etc/yunohost/apps/$app/settings.yml y sirve
+# /yunohost/sso/applogos/<sha256>.png: hay que registrar ambos.
 _install_app_logo() {
     local logos_dir="/usr/share/yunohost/applogos"
     local src_logo=""
@@ -78,9 +81,31 @@ _install_app_logo() {
         mkdir -p "$logos_dir" 2>/dev/null || true
         cp -f "$src_logo" "$logos_dir/$app.png" 2>/dev/null || true
         chmod 644 "$logos_dir/$app.png" 2>/dev/null || true
+
+        local logo_hash
+        logo_hash=$(sha256sum "$src_logo" | cut -d' ' -f1)
+        cp -f "$src_logo" "$logos_dir/$logo_hash.png"
+        chmod 644 "$logos_dir/$logo_hash.png" 2>/dev/null || true
+
+        python3 - "$app" "$logo_hash" <<'PYEOF'
+import sys, yaml
+app, logo_hash = sys.argv[1], sys.argv[2]
+path = f"/etc/yunohost/apps/{app}/settings.yml"
+with open(path) as f:
+    settings = yaml.safe_load(f) or {}
+settings.setdefault("_permissions", {}).setdefault("main", {})["logo_hash"] = logo_hash
+with open(path, "w") as f:
+    yaml.safe_dump(settings, f)
+PYEOF
+
+        ynh_hide_warnings yunohost app ssowatconf || true
     fi
 }
 
 _remove_app_logo() {
-    rm -f "/usr/share/yunohost/applogos/$app.png"
+    if [ -f "/usr/share/yunohost/applogos/$app.png" ]; then
+        local logo_hash
+        logo_hash=$(sha256sum "/usr/share/yunohost/applogos/$app.png" | cut -d' ' -f1)
+        rm -f "/usr/share/yunohost/applogos/$app.png" "/usr/share/yunohost/applogos/$logo_hash.png"
+    fi
 }
