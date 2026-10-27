@@ -2,6 +2,6 @@
 
 - **Panel web y portada**: `https://__DOMAIN__/`
 - **Directorio de instalación**: `__INSTALL_DIR__`
-- **Directorio de datos persistentes**: `__DATA_DIR__`
+- **Directorio de datos persistentes**: `__DATA_DIR__` (incluye el historial de segmentos de voz por sala en `audio/`, con retención de 1 hora)
 - **Puerto HTTP interno**: `__PORT__`
-- **Servidor Mumble local**: `127.0.0.1:64738` (instalado automáticamente con `mumble-server`; desde el panel web de administración puedes alternar en vivo entre el servidor Mumble local y cualquier servidor Mumble público remoto de Internet).
+- **Servidor de voz**: integrado en la propia aplicación — no se instala ni requiere ningún servicio de voz externo.

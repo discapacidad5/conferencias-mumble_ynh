@@ -23,7 +23,7 @@ mkdir -p "$data_dir/docs"
 chown -R "$app:$app" "$install_dir" "$data_dir"
 chmod 750 "$install_dir" "$data_dir"
 chmod 600 "$install_dir/.env"
-chmod +x "$install_dir/conferencia-mumble"
+chmod +x "$install_dir/conferencia"
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
@@ -35,7 +35,7 @@ ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_restore "/etc/systemd/system/$app.service"
 systemctl enable "$app.service" --quiet
 
-yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
+yunohost service add "$app" --description="Conferencias Voice & Rooms" --log=systemd
 
 _install_app_logo
 

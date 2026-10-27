@@ -18,7 +18,7 @@ _setup_app_sources() {
     tmp_clone=$(mktemp -d)
     git clone --quiet --depth 1 "$UPSTREAM_REPO" "$tmp_clone"
 
-    for item in main.go mumble.go state.go store.go go.mod go.sum web LICENSE README.md; do
+    for item in main.go media.go segmentos.go state.go store.go go.mod go.sum web LICENSE README.md; do
         if [ -e "$tmp_clone/$item" ]; then
             rm -rf "$install_dir/$item"
             cp -a "$tmp_clone/$item" "$install_dir/$item"
@@ -38,14 +38,14 @@ _build_app() {
             GOCACHE="$install_dir/.cache/go-build" \
             GOPATH="$install_dir/.go" \
             CGO_ENABLED=0 \
-            go build -ldflags="-s -w" -o "$install_dir/conferencia-mumble" .
+            go build -ldflags="-s -w" -o "$install_dir/conferencia" .
         ynh_safe_rm "$install_dir/.cache"
         ynh_safe_rm "$install_dir/.go"
     popd >/dev/null
 
     chown -R "$app:$app" "$install_dir" "$data_dir"
     chmod 750 "$install_dir" "$data_dir"
-    chmod +x "$install_dir/conferencia-mumble"
+    chmod +x "$install_dir/conferencia"
 }
 
 _stabilize_cloudflared_tunnel() {

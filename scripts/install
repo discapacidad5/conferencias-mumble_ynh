@@ -16,7 +16,7 @@ _setup_app_sources
 #=================================================
 # BUILD GO BACKEND WITH EMBEDDED WEB FRONTEND
 #=================================================
-ynh_script_progression "Building Conferencias Mumble Go binary..."
+ynh_script_progression "Building Conferencias Go binary..."
 
 _build_app
 
@@ -42,7 +42,7 @@ _stabilize_cloudflared_tunnel
 
 _install_app_logo
 
-yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
+yunohost service add "$app" --description="Conferencias Voice & Rooms" --log=systemd
 
 #=================================================
 # START SYSTEMD SERVICE

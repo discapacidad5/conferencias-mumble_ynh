@@ -20,15 +20,9 @@ if [ -z "${app_secret:-}" ]; then
     ynh_app_setting_set --key=app_secret --value="$app_secret"
 fi
 
-if [ -z "${mumble_mode:-}" ]; then
-    mumble_mode="local"
-    ynh_app_setting_set --key=mumble_mode --value="$mumble_mode"
-fi
-
-if [ -z "${mumble_remote_host:-}" ]; then
-    mumble_remote_host="localhost"
-    ynh_app_setting_set --key=mumble_remote_host --value="$mumble_remote_host"
-fi
+# La app ya no usa ningún servidor de voz externo: limpiar ajustes legados.
+ynh_app_setting_delete --key=mumble_mode 2>/dev/null || true
+ynh_app_setting_delete --key=mumble_remote_host 2>/dev/null || true
 
 #=================================================
 # UPDATE SOURCES AND REBUILD
@@ -60,7 +54,7 @@ _stabilize_cloudflared_tunnel
 
 _install_app_logo
 
-yunohost service add "$app" --description="Conferencias Mumble Voice & Rooms" --log=systemd
+yunohost service add "$app" --description="Conferencias Voice & Rooms" --log=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
