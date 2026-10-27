@@ -18,6 +18,11 @@ _setup_app_sources() {
     tmp_clone=$(mktemp -d)
     git clone --quiet --depth 1 "$UPSTREAM_REPO" "$tmp_clone"
 
+    # Limpiar fuentes previas: los archivos renombrados o eliminados
+    # upstream (p.ej. mumble.go -> media.go) no deben quedar en el build
+    find "$install_dir" -maxdepth 1 -name '*.go' -delete
+    rm -rf "$install_dir/web"
+
     for item in main.go media.go segmentos.go state.go store.go go.mod go.sum web LICENSE README.md; do
         if [ -e "$tmp_clone/$item" ]; then
             rm -rf "$install_dir/$item"
