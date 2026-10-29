@@ -7,7 +7,7 @@ name = "Conferencias"
 description.en = "Ultra-lightweight voice & moderated 9-seat conferencing with its own reliable voice protocol over HTTPS/443 for slow mobile connections"
 description.es = "Plataforma ultraligera de conferencias con 9 asientos moderados, protocolo de voz propio confiable, pizarra y cámara ligera por HTTPS/443"
 
-version = "2.1.3~ynh1"
+version = "2.1.4~ynh1"
 
 maintainers = ["discapacidad5"]
 
